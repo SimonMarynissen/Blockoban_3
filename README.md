@@ -1,0 +1,1 @@
+A collaboration between Andrew Lee and Simon Marynissen. The game will be an altered version of Blockoban 2. Blockoban 3 is just a temporary name.
