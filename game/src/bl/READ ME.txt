@@ -1,0 +1,4 @@
+These files are originally made by Jean-Philippe Sarda.
+I (Simon Marynissen) have edited them a bit to make them work properly with FlashDevelop.
+There is one requirement: You've to call your main Class 'Main' in both the game and the editor.
+You'll also find a standard Main class in side this folder.

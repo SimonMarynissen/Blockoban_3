@@ -4,8 +4,7 @@
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
 	import flash.net.LocalConnection;
-	import flash.utils.ByteArray; 
-	import BLEvent;
+	import flash.utils.ByteArray;
 	
 	/**
 	 * BL manager files rewritten to properly work with FlashDevelop.
