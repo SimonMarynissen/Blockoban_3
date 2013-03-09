@@ -2,6 +2,7 @@ package {
 	import flash.events.Event;
 	import flash.display.Sprite;
 	import bl.MyGameManager;
+	import flash.utils.ByteArray;
 	import states.MenuState;
 	import states.State;
 	
@@ -34,6 +35,11 @@ package {
 			}
 			state = newState;
 			stateContainer.addChild(state);
+		}
+		
+		public static function deserialize(data:ByteArray):Array {
+			data.position = 0;
+			return data.readObject();
 		}
 	}
 }

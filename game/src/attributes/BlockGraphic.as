@@ -1,11 +1,9 @@
 package attributes {
-	import flash.display.Bitmap;
 	
-	public class BlockGraphic extends Bitmap {
+	public class BlockGraphic extends AttributeGraphic {
 		
 		public function BlockGraphic(x:Number, y:Number) {
-			this.x = x;
-			this.y = y;
+			super(x, y);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿package bl {
 	
 	import flash.utils.ByteArray;
+	import states.*;
 	
 	/**
 	 * BL manager files rewritten to properly work with FlashDevelop.
@@ -34,8 +35,10 @@
 		 * @param	official	0 for a non official level. 1 for an official, but not yet completed. 2 for an offical that already has been completed.
 		 */
 		override public function blPlayLvl(data:ByteArray, official:Number):void {
+			var a:Array = Main.deserialize(data);
+			sendPlayResult(true, "");
+			Main.changeState(new Level(a));
 			// You must implement this function.
-			
 			// example:
 			// theroot.serialize(data);
 			// sendPlayResult(true, "");
@@ -56,6 +59,7 @@
 		 */
 		override public function blWelcome():void {
 		    // You may implement this.
+			Main.changeState(new MenuState());
 		}
 		
 		/**

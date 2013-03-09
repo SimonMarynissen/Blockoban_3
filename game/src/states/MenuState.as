@@ -1,6 +1,5 @@
 package states {
 	import flash.events.Event;
-	import level.Level;
 	
 	public class MenuState extends State {
 		
@@ -10,7 +9,7 @@ package states {
 		
 		override public function added(e:Event):void {
 			super.added(e);
-			Main.changeState(new Level());
+			//Main.changeState(new Level());
 		}
 	}
 }
