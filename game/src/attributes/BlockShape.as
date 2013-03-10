@@ -16,5 +16,14 @@ package attributes {
 				if (b.locked) locked = true;
 			}
 		}
+		
+		override public function move(x:int, y:int) {
+			this.x += x;
+			this.y += y;
+			for each (var b:Block in blocks) {
+				b.x += x, b.y += y;
+				Tweener.addTween(b.graphic, { x:x, y:y, time:Math.sqrt(x * x + y * y) * 0.001, transition:"linear" } );
+			}
+		}
 	}
 }
