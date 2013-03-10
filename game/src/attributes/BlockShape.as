@@ -25,5 +25,12 @@ package attributes {
 				Tweener.addTween(b.graphic, { x:x, y:y, time:Math.sqrt(x * x + y * y) * 0.001, transition:"linear" } );
 			}
 		}
+		
+		override public function containBlock(x:int, y:int):Block {
+			for each (var b:Block in blocks) {
+				if (b.x == x && b.y == y) return b;
+			}
+			return null;
+		}
 	}
 }
