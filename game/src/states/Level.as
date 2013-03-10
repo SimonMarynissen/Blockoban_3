@@ -15,7 +15,7 @@ package states {
 			w:int, h:int,
 			blocks:/*Block*/Array,
 			walls:/*Wall*/Array,
-			xDirection:int, yDirection,
+			xDirection:int, yDirection:int,
 			xGravity:int, yGravity:int;
 		
 		public function Level(data:Array) {
@@ -23,15 +23,15 @@ package states {
 			this.data = data;
 		}
 		
-		override public function added(e:Event) {
+		override public function added(e:Event):void {
 			super.added(e);
-			init(data);
+			init();
 		}
 		
-		private function init(data:Array):void {
+		private function init():void {
 			// data array to make blocks, etc
-			for each (var b:Block in blocks) b.graphic.addToScreen(this);
-			for each (var w:Wall in walls) w.graphic.addToScreen(this);
+			for each (var b:Block in blocks) b.addToScreen(this);
+			for each (var w:Wall in walls) w.addToScreen(this);
 			addEventListener(Event.ENTER_FRAME, update);
 		}
 		
@@ -64,7 +64,7 @@ package states {
 		
 		private function fallBlocks():void {
 			sortBlocks(xGravity, yGravity);
-			for (i = 0; i < blocks.length; i++) { // under construction
+			for (var i:int = 0; i < blocks.length; i++) { // under construction
 				var falling:Boolean = true;
 				var xDistance:int, yDistance:int;
 				var xcor:int = blocks[i].x;

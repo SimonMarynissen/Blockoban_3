@@ -1,13 +1,19 @@
 package attributes {
+	import flash.display.Sprite;
 
 	public class Attribute {
 		
 		protected var
-			x:int, y:int;
+			_x:int, _y:int,
+			_graphic:AttributeGraphic;
 		
 		public function Attribute(x:int, y:int) {
-			this.x = x;
-			this.y = y;
+			_x = x;
+			_y = y;
+		}
+		
+		public function addToScreen(screen:Sprite) {
+			if (_graphic) _graphic.addToScreen(screen);
 		}
 	}
 }

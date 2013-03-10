@@ -9,7 +9,7 @@ package attributes {
 			this.y = y;
 		}
 		
-		public function addToScreen(screen:Sprite) {
+		public function addToScreen(screen:Sprite):void {
 			screen.addChild(this);
 		}
 	}
