@@ -12,7 +12,7 @@ package attributes {
 			_y = y;
 		}
 		
-		public function addToScreen(screen:Sprite) {
+		public function addToScreen(screen:Sprite):void {
 			if (_graphic) _graphic.addToScreen(screen);
 		}
 	}

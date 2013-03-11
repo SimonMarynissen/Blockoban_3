@@ -18,11 +18,12 @@ package attributes {
 		}
 		
 		override public function move(x:int, y:int) {
+			_moving = true;
 			this.x += x;
 			this.y += y;
 			for each (var b:Block in blocks) {
 				b.x += x, b.y += y;
-				Tweener.addTween(b.graphic, { x:x, y:y, time:Math.sqrt(x * x + y * y) * 0.001, transition:"linear" } );
+				Tweener.addTween(b.graphic, { x:x, y:y, time:Math.sqrt(x * x + y * y) * 0.001, transition:"linear", onComplete:function ():void { _moving = false; } } );
 			}
 		}
 		

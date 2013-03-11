@@ -3,8 +3,8 @@ package {
 	import flash.display.Sprite;
 	import bl.MyGameManager;
 	import flash.utils.ByteArray;
-	import states.MenuState;
-	import states.State;
+	import states.*;
+	import attributes.Assets;
 	
 	/**
 	 * @author Andrew Lee
@@ -15,10 +15,11 @@ package {
 		public static var BLManager:MyGameManager;
 		
 		private static var 
-			state:State = new MenuState(),
+			state:State = new Level(new Array()),
 			stateContainer:Sprite = new Sprite();
 		
 		public function Main():void {
+			Assets.init();
 			BLManager = new MyGameManager(this);
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
 				stage.frameRate = 30;

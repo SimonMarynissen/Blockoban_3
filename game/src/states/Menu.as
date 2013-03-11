@@ -1,9 +1,9 @@
 package states {
 	import flash.events.Event;
 	
-	public class MenuState extends State {
+	public class Menu extends State {
 		
-		public function MenuState():void {
+		public function Menu():void {
 			super();
 		}
 		

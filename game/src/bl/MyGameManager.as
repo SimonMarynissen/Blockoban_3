@@ -2,6 +2,7 @@
 	
 	import flash.utils.ByteArray;
 	import states.*;
+	import attributes.Assets;
 	
 	/**
 	 * BL manager files rewritten to properly work with FlashDevelop.
@@ -52,6 +53,7 @@
 		 */
 		override public function blInit():void {
 			// You may implement this.
+			Assets.init();
 		}
 		
 		/**
@@ -59,7 +61,7 @@
 		 */
 		override public function blWelcome():void {
 		    // You may implement this.
-			Main.changeState(new MenuState());
+			Main.changeState(new Menu());
 		}
 		
 		/**
