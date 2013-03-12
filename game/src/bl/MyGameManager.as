@@ -39,10 +39,6 @@
 			var a:Array = Main.deserialize(data);
 			sendPlayResult(true, "");
 			theroot.changeState(new Level(a));
-			// You must implement this function.
-			// example:
-			// theroot.serialize(data);
-			// sendPlayResult(true, "");
 			
 			// When the player completes a level
 			// you have to call lvlCompleted(completed:boolean, score:Number);
@@ -53,7 +49,6 @@
 		 */
 		override public function blInit():void {
 			// You may implement this.
-			Assets.init();
 		}
 		
 		/**

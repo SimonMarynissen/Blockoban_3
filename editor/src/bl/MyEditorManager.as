@@ -1,6 +1,6 @@
 ﻿package bl {
-	
 	import flash.utils.ByteArray;
+	import states.Editor;
 	
 	/**
 	 * BL manager files rewritten to properly work with FlashDevelop.
@@ -33,21 +33,17 @@
 		 * @param	data	A ByteArray containing the level data to be unserialized. If it's empty, you deal with a new level.
 		 */
 		override public function blEditLvl(data:ByteArray):void {
-		    // You must implement this function.
-			
-			// example:
-			// theroot.unserializeAndEdit(data);
-			// sendEditResult(true, "");
+			var a:Array = theroot.deserialize(data);
+			sendEditResult(true, "");
+			theroot.changeState(new Editor(a));
 		}
 		
 		/**
 		 * The BL API will call this function when the player wants to save a level.
 		 */
 		override public function blGetLvlData():void {
-			// You must implement this function.
-			
-		    // example:
-			// sendLvlData(true, theroot.serializeData());
+			var byte:ByteArray = theroot.serialize();
+			sendLvlData(!theroot.failed, byte);
 		}
 		
 		/**

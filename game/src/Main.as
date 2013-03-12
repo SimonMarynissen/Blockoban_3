@@ -14,28 +14,26 @@ package {
 		
 		public static var BLManager:MyGameManager;
 		
-		private static var 
-			state:State = new Level(new Array()),
-			stateContainer:Sprite = new Sprite();
+		private var 
+			state:State = new State(),
 		
 		public function Main():void {
 			Assets.init();
 			BLManager = new MyGameManager(this);
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
 				stage.frameRate = 30;
-				addChild(stateContainer);
-				stateContainer.addChild(state);
+				addChild(state);
 			});
 		}
 		
 		public function changeState(newState:State):void {
 			if (state != null) {
 				state.removed();
-				stateContainer.removeChild(state);
+				removeChild(state);
 				state = null;
 			}
 			state = newState;
-			stateContainer.addChild(state);
+			addChild(state);
 		}
 		
 		public static function deserialize(data:ByteArray):Array {
