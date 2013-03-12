@@ -16,18 +16,28 @@ package attributes {
 		private static const White:Class;
 		[Embed(source = "../assets/Yellow Square.png")]
 		private static const Yellow:Class;
+		
 		[Embed(source = "../assets/Temp Wall Block.png")]
 		private static const Wall:Class;
 		
+		[Embed(source = "../assets/red hold.png")]
+		private static const Red_Hold:Class;
+		[Embed(source = "../assets/yellow hold.png")]
+		private static const Yellow_Hold:Class;
+		
 		public static var
 			blocks:Array,
-			walls:Array;
+			walls:Array,
+			holds:Array;
 		
 		public static function init():void {
 			blocks = new Array(new Blue().bitmapData, new Green().bitmapData, new Orange().bitmapData,
 				new Purple().bitmapData, new Red().bitmapData, new White().bitmapData,
 				new Yellow().bitmapData);
 			walls = new Array(new Wall().bitmapData);
+			holds = new Array(new Red_Hold().bitmapData, new Red_Hold().bitmapData, new Red_Hold().bitmapData,
+				new Red_Hold().bitmapData, new Red_Hold().bitmapData, new Red_Hold().bitmapData,
+				new Yellow_Hold().bitmapData);
 		}
 	}
 }

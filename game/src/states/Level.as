@@ -16,6 +16,7 @@ package states {
 			w:int = 0, h:int = 0, // amount of rows and colums
 			blocks:/*Block*/Array,
 			walls:/*Wall*/Array,
+			holds:/*Hold*/Array,
 			xDirection:int = 0, yDirection:int = 0,
 			xGravity:int = 0, yGravity:int = 1,
 			falling:Boolean, matching:Boolean;
@@ -56,30 +57,29 @@ package states {
 			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		}
 		
-		private var onDownBlock:Block;
+		private var onDownX:int = -1, onDownY:int = -1;
 		private function mouseDown(e:MouseEvent):void {
 			trace("down");
 			if (!isMoving() && !falling && !matching) {
-				onDownBlock = findBlock((mouseX - xOffset) / cellWidth, (mouseY - yOffset) / cellWidth);
+				var b:Block = findBlock((mouseX - xOffset) / cellWidth, (mouseY - yOffset) / cellWidth);
+				onDownX = b.x;
+				onDownY = b.y;
 			}
 		}
 		
 		private function mouseMove(e:MouseEvent):void {
 			trace("move");
-			if (onDownBlock != null) {
-				
-			}
 		}
 		
 		private function mouseUp(e:MouseEvent):void {
 			trace("up");
-			if (onDownBlock != null) {
+			if (onDownX != -1 || onDownY != -1) {
 				if (!isMoving() && !falling && !matching) {
 					var onUpX:int = (mouseX - xOffset) / cellWidth;
 					var onUpY:int = (mouseY - yOffset) / cellWidth;
-					if (onDownBlock.x != onUpX || onDownBlock.x != onUpY) {
-						var dx:int = mouseX - (xOffset + onDownBlock.x * cellWidth + cellWidth / 2);
-						var dy:int = mouseY - (yOffset + onDownBlock.y * cellWidth + cellWidth / 2);
+					if (onDownX != onUpX || onDownY != onUpY) {
+						var dx:int = mouseX - (xOffset + onDownX * cellWidth + cellWidth / 2);
+						var dy:int = mouseY - (yOffset + onDownY * cellWidth + cellWidth / 2);
 						xDirection = 0;
 						yDirection = 0;
 						var angle:Number = Math.atan2(dy, dx);
@@ -87,10 +87,11 @@ package states {
 						else if (angle < Math.PI / 4 && angle >= -Math.PI / 4) xDirection = 1;
 						else if (angle >= 3 * Math.PI / 4 || angle < -3 * Math.PI / 4) xDirection = -1;
 						else if (angle >= -3 * Math.PI / 4 && angle < -Math.PI / 4) yDirection = -1;
-						onDownBlock.moving = true;
+						findBlock(onDownX, onDownY).moving = true;
 						moveBlocks();
 					}
 				}
+				onDownX = -1, onDownY = -1;
 			}
 		}
 		
@@ -130,8 +131,9 @@ package states {
 		private function fallBlocks():void {
 			sortBlocks(xGravity, yGravity);
 			for (var i:int = 0; i < blocks.length; i++) {
+				if (blocks[i].holded) continue;
 				var _falling:Boolean = true;
-				var xDistance:int, yDistance:int;
+				var xDistance:int = 0, yDistance:int = 0;
 				var xcor:int = blocks[i].x;
 				var ycor:int = blocks[i].y;
 				while (_falling) {
@@ -152,6 +154,7 @@ package states {
 					matching = true;
 				}
 			}
+			for (i = 0; i < blocks.length; i++) blocks[i].holded = false;
 			falling = false;
 		}
 		

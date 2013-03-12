@@ -18,7 +18,8 @@ package attributes {
 			_moving:Boolean,
 			_icy:Boolean,
 			_destroyed:Boolean,
-			_shaped:Boolean; // if the block is part of a shape.
+			_shaped:Boolean, // if the block is part of a shape.
+			_holded:Boolean;
 			
 		private var
 			_colour:int;
@@ -57,5 +58,7 @@ package attributes {
 		public function set destroyed(destroyed:Boolean):void { _destroyed = destroyed; }
 		public function get shaped():Boolean { return _shaped; }
 		public function set shaped(shaped:Boolean):void { _shaped = shaped; }
+		public function get holded():Boolean { return _holded; }
+		public function set holded(holded:Boolean):void { _holded = holded; }
 	}
 }

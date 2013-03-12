@@ -1,5 +1,4 @@
 package attributes {
-	import flash.display.BitmapData;
 	
 	public class BlockGraphic extends AttributeGraphic {
 		
