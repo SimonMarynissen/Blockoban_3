@@ -1,9 +1,13 @@
 package states {
+	import attributes.Assets;
 	import attributes.Block;
+	import attributes.Board;
+	import attributes.Hold;
 	import attributes.Wall;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import states.State;
+	import undo.*;
 
 	public class Level extends State {
 		
@@ -17,9 +21,12 @@ package states {
 			blocks:/*Block*/Array,
 			walls:/*Wall*/Array,
 			holds:/*Hold*/Array,
+			moves:/*Move*/Array,
+			boards:/*Board*/Array,
 			xDirection:int = 0, yDirection:int = 0,
 			xGravity:int = 0, yGravity:int = 1,
-			falling:Boolean, matching:Boolean;
+			falling:Boolean, matching:Boolean,
+			undoButton:Button;
 		
 		public function Level(data:Array) {
 			super();
@@ -35,22 +42,38 @@ package states {
 			// data array to make blocks, etc
 			blocks = new Array();
 			walls = new Array();
+			holds = new Array();
+			moves = new Array();
+			boards = new Array();
+			/*w = data[0];
+			h = data[1];*/
 			w = 3;
-			h = 3;
-			
+			h = 5;
+			centre();
 			for (var i:int = 0; i < w+2; i++) {
 				for (var j:int = 0; j < h+2; j++) {
 					if (i == 0 || i == w+1 || j == 0 || j == h+1) {
-						walls[i + (w+2) * j] = new Wall(i, j);
+						walls[i + (w + 2) * j] = new Wall(i, j);
 					}
+					boards[i + (w + 2) * j] = new Board(i, j);
 				}
 			}
 			blocks.push(new Block(1, 1, Block.blue));
-			blocks.push(new Block(2, 2, Block.orange));
-			for each (var b:Block in blocks) b.addToScreen(this);
-			for (i = 0; i < (w+2)*(h+2); i++) {
-				if (walls[i] != null) walls[i].addToScreen(this);
+			blocks.push(new Block(2, 2, Block.blue));
+			holds.push(new Hold(1, 2, 3));
+			for (i = 0; i < (w + 2) * (h + 2); i++) boards[i].addToScreen(this);
+			for (i = 0; i < (w+2)*(h+2); i++) if (walls[i] != null) walls[i].addToScreen(this);
+			for each (var hold:Hold in holds) {
+				hold.addToScreen(this);
+				block = findBlock(hold.x, hold.y);
+				if (block != null) block.holded = true;
 			}
+			for each (var block:Block in blocks) block.addToScreen(this);
+			
+			undoButton = new Button(10, 410, Assets.undoButton, undo);
+			addChild(undoButton);
+			fallBlocks();
+			
 			addEventListener(Event.ENTER_FRAME, update);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 			//addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
@@ -59,11 +82,12 @@ package states {
 		
 		private var onDownX:int = -1, onDownY:int = -1;
 		private function mouseDown(e:MouseEvent):void {
-			trace("down");
 			if (!isMoving() && !falling && !matching) {
-				var b:Block = findBlock((mouseX - xOffset) / cellWidth, (mouseY - yOffset) / cellWidth);
-				onDownX = b.x;
-				onDownY = b.y;
+				var block:Block = findBlock((mouseX - xOffset) / cellWidth, (mouseY - yOffset) / cellWidth);
+				if (block != null) {
+					onDownX = block.x;
+					onDownY = block.y;
+				}
 			}
 		}
 		
@@ -72,7 +96,6 @@ package states {
 		}
 		
 		private function mouseUp(e:MouseEvent):void {
-			trace("up");
 			if (onDownX != -1 || onDownY != -1) {
 				if (!isMoving() && !falling && !matching) {
 					var onUpX:int = (mouseX - xOffset) / cellWidth;
@@ -121,11 +144,13 @@ package states {
 					}
 					if (blocks[i].moving) {
 						blocks[i].move(xDirection, yDirection);
+						var hold:Hold = findHold(blocks[i].x, blocks[i].y);
+						if (hold != null) blocks[i].holded = true;
 						matching = true;
+						falling = true;
 					}
 				}
 			}
-			falling = true;
 		}
 		
 		private function fallBlocks():void {
@@ -142,9 +167,15 @@ package states {
 						_falling = false;
 						break;
 					}
-					var block2:Block = findBlock(xcor, ycor)
-					if (block2 != null && block2 != blocks[i]) {
+					var block:Block = findBlock(xcor, ycor);
+					if (block != null && block != blocks[i]) {
 						_falling = false;
+						break;
+					}
+					var hold:Hold = findHold(xcor, ycor);
+					if (hold != null) {
+						blocks[i].holded = true;
+						xDistance += xGravity, yDistance += yGravity;
 						break;
 					}
 					xDistance += xGravity, yDistance += yGravity;
@@ -154,8 +185,8 @@ package states {
 					matching = true;
 				}
 			}
-			for (i = 0; i < blocks.length; i++) blocks[i].holded = false;
 			falling = false;
+			if (!matching) endMove();
 		}
 		
 		private function matchBlocks():void {
@@ -182,6 +213,20 @@ package states {
 			falling = true;
 		}
 		
+		private function endMove():void {
+			for (var i:int = 0; i < blocks.length; i++) blocks[i].holded = false;
+			moves.push(new Move(blocks));
+		}
+		
+		private function undo():void {
+			if (moves.length > 1 && !isMoving() && !falling && !matching) {
+				moves.pop()
+				var previousMove:Move = moves[moves.length - 1];
+				blocks = previousMove.blocks;
+				for each (var block:Block in blocks) block.rebase();
+			}
+		}
+		
 		private function sortBlocks(xDir:int, yDir:int):void {
 			if (xDir == -1) blocks.sortOn(["x", "y"], Array.NUMERIC);
 			else if (xDir == 1) blocks.sortOn(["x", "y"], Array.NUMERIC | Array.DESCENDING);
@@ -190,18 +235,31 @@ package states {
 		}
 		
 		private function isMoving():Boolean {
-			for each (var b:Block in blocks) {
-				if (b.moving) return true;
+			for each (var block:Block in blocks) {
+				if (block.moving) return true;
 			}
 			return false;
 		}
 		
 		private function findBlock(x:int, y:int):Block {
-			for each (var b:Block in blocks) {
-				var b2:Block = b.containBlock(x, y);
-				if (b2 != null) return b2;
+			for each (var block:Block in blocks) {
+				var block2:Block = block.containBlock(x, y);
+				if (block2 != null) return block2;
 			}
 			return null;
+		}
+		
+		private function findHold(x:int, y:int):Hold {
+			for each (var hold:Hold in holds) {
+				if (hold.x == x && hold.y == y) return hold;
+			}
+			return null;
+		}
+		
+		private function centre():void {
+			xOffset = (stage.stageWidth - (w + 2) * cellWidth) / 2;
+			yOffset = (stage.stageHeight - 50 - (h + 2) * cellWidth) / 2;
+			trace("centre", xOffset, yOffset);
 		}
 	}
 }

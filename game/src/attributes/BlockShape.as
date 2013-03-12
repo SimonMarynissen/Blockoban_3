@@ -3,11 +3,12 @@ package attributes {
 	public class BlockShape extends Block {
 		
 		private var
-			blocks:/*Block*/Array;
+			blocks:/*Block*/Array,
+			graphics:Array;
 		
 		public function BlockShape(blocks:Array) {
 			this.blocks = blocks;
-			var graphics:Array = new Array();
+			_shaped = true;
 			for (var i in blocks) graphics.push(blocks[i].graphic);
 			graphic = new BlockShapeGraphic(graphics);
 			for each (var b:Block in blocks) {
@@ -25,6 +26,23 @@ package attributes {
 				b.x += x, b.y += y;
 				Tweener.addTween(b.graphic, { x:x, y:y, time:Math.sqrt(x * x + y * y) * 0.001, transition:"linear", onComplete:function ():void { _moving = false; } } );
 			}
+		}
+		
+		public function rebase():void { // under construction
+			_graphic.x = Level.xOffset + _x * Level.cellWidth;
+			_graphic.y = Level.yOffset + _y * Level.cellWidth;
+		}
+		
+		public function clone():Block { // under construction
+			var block:Block = new Block(_x, _y, _colour);
+			block.locked = _locked;
+			block.moving = _moving;
+			block._graphic = _graphic;
+			block.icy = _icy;
+			block.destroyed = _destroyed;
+			block.shaped = _shaped;
+			block.holded = _holded;
+			return block;
 		}
 		
 		override public function containBlock(x:int, y:int):Block {

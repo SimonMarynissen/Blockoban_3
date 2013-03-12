@@ -1,4 +1,5 @@
 package attributes {
+	import flash.display.BitmapData;
 
 	public class Assets {
 		
@@ -25,10 +26,18 @@ package attributes {
 		[Embed(source = "../assets/yellow hold.png")]
 		private static const Yellow_Hold:Class;
 		
+		[Embed(source = "../assets/button_undo.png")]
+		private static const Button_Undo:Class;
+		
+		[Embed(source = "../assets/Background Tile.png")]
+		private static const Board:Class;
+		
 		public static var
 			blocks:Array,
 			walls:Array,
-			holds:Array;
+			holds:Array,
+			undoButton:BitmapData,
+			board:BitmapData;
 		
 		public static function init():void {
 			blocks = new Array(new Blue().bitmapData, new Green().bitmapData, new Orange().bitmapData,
@@ -38,6 +47,8 @@ package attributes {
 			holds = new Array(new Red_Hold().bitmapData, new Red_Hold().bitmapData, new Red_Hold().bitmapData,
 				new Red_Hold().bitmapData, new Red_Hold().bitmapData, new Red_Hold().bitmapData,
 				new Yellow_Hold().bitmapData);
+			undoButton = new Button_Undo().bitmapData;
+			board = new Board().bitmapData;
 		}
 	}
 }

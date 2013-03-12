@@ -28,7 +28,7 @@ package {
 			});
 		}
 		
-		public static function changeState(newState:State):void {
+		public function changeState(newState:State):void {
 			if (state != null) {
 				state.removed();
 				stateContainer.removeChild(state);

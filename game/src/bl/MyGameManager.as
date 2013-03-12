@@ -38,7 +38,7 @@
 		override public function blPlayLvl(data:ByteArray, official:Number):void {
 			var a:Array = Main.deserialize(data);
 			sendPlayResult(true, "");
-			Main.changeState(new Level(a));
+			theroot.changeState(new Level(a));
 			// You must implement this function.
 			// example:
 			// theroot.serialize(data);
@@ -61,7 +61,7 @@
 		 */
 		override public function blWelcome():void {
 		    // You may implement this.
-			Main.changeState(new Menu());
+			theroot.changeState(new Menu());
 		}
 		
 		/**

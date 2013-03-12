@@ -34,9 +34,26 @@ package attributes {
 			_moving = true;
 			_x += x;
 			_y += y;
-			var xAmount:int = _x * Level.cellWidth;
-			var yAmount:int = _y * Level.cellWidth;
-			Tweener.addTween(_graphic, { x:xAmount, y:yAmount, time:Math.sqrt(xAmount*xAmount + yAmount*yAmount)*0.01, transition:"easeOutElastic", onComplete:function ():void { _moving = false; }} );
+			var xAmount:int = Level.xOffset + _x * Level.cellWidth;
+			var yAmount:int = Level.yOffset + _y * Level.cellWidth;
+			Tweener.addTween(_graphic, { x:xAmount, y:yAmount, time:Math.sqrt(xAmount*xAmount + yAmount*yAmount)*0.001, transition:"easeOutQuint", onComplete:function ():void { _moving = false; }} );
+		}
+		
+		public function rebase():void {
+			_graphic.x = Level.xOffset + _x * Level.cellWidth;
+			_graphic.y = Level.yOffset + _y * Level.cellWidth;
+		}
+		
+		public function clone():Block {
+			var block:Block = new Block(_x, _y, _colour);
+			block.locked = _locked;
+			block.moving = _moving;
+			block._graphic = _graphic;
+			block.icy = _icy;
+			block.destroyed = _destroyed;
+			block.shaped = _shaped;
+			block.holded = _holded;
+			return block;
 		}
 		
 		public function containBlock(x:int, y:int):Block {
@@ -46,14 +63,13 @@ package attributes {
 			return null;
 		}
 		
+		public function get locked():Boolean { return _locked; }
+		public function set locked(locked:Boolean):void { _locked = locked; }
 		public function get moving():Boolean { return _moving; }
 		public function set moving(moving:Boolean):void { _moving = moving; }
 		public function get icy():Boolean { return _icy; }
+		public function set icy(icy:Boolean):void { _icy = icy; }
 		public function get colour():int { return _colour; }
-		public function get x():int { return _x; }
-		public function set x(x:int):void { _x = x; }
-		public function get y():int { return _y; }
-		public function set y(y:int):void { _y = y; }
 		public function get destroyed():Boolean { return _destroyed; }
 		public function set destroyed(destroyed:Boolean):void { _destroyed = destroyed; }
 		public function get shaped():Boolean { return _shaped; }
