@@ -11,7 +11,7 @@ package states {
 		public static const
 			cellWidth:int = 24,
 			xOffset:int = 108,
-			yOffset:int = 57;
+			yOffset:int = 8;
 		
 		private var
 			maxColumns:int = 16,
@@ -19,16 +19,19 @@ package states {
 			blocks:Array,
 			walls:Array,
 			holds:Array,
-			boards:Array;
+			boards:Array,
+			extra:Array,
+			type:String = "block";
 		
 		public function Editor(data:Array) { // w, h, walls, blocks, holds
 			walls = new Array();
 			blocks = new Array();
 			holds = new Array();
 			boards = new Array();
+			extra = new Array(5);
 			for (var x:int = 0; x < maxColumns; x++) {
 				for (var y:int = 0; y < maxRows; y++) {
-					addChild(boards[x + y * maxColumns] = new Board(x, y));
+					addChild(boards[x + y * maxColumns] = new Board(x, y, this));
 				}
 			}
 			var shiftX:int = (maxColumns - data[0]) / 2;
@@ -41,13 +44,27 @@ package states {
 				}
 			}
 			for (i = 0; i < data[3].length; i++) {
-				trace(data[3][i]);
-				trace(data[3][i][0], data[3][i][1], data[3][i][2]);
 				blocks.push(new Block(data[3][i][0], data[3][i][1], data[3][i][2])); // x, y, colour
 				addChild(blocks[i]);
 			}
 			for (i = 0; i < data[4].length; i++) {
 				holds.push(new Hold(data[4][i][0], data[4][i][1], data[4][i][2])); // x, y, colour
+				addChild(holds[i]);
+			}
+		}
+		
+		public function action(X:int, Y:int):void {
+			trace("action");
+			switch (type) {
+				case "block":
+					trace("action");
+					blocks.push(new Block(X, Y, extra[0]));
+					addChild(blocks[blocks.length - 1]);
+					break;
+				case "hold":
+					holds.push(new Hold(X, Y, extra[0]));
+					addChild(holds[holds.length - 1]);
+					break;
 			}
 		}
 		
