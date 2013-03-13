@@ -16,12 +16,13 @@ package {
 		public static var BLManager:MyEditorManager;
 		
 		private var
-			_state:State = new Editor([1, 1, [[0]], [], []]),
+			_state:State,
 			// _state:State = new State(),
 			_failed:Boolean = false;
 		
 		public function Main():void {
 			Assets.init();
+			_state = new Editor([1, 1, [[0]], [[0, 0, 5]], []]);
 			BLManager = new MyEditorManager(this);
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
 				stage.frameRate = 30;
