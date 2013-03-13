@@ -16,7 +16,8 @@ package {
 		public static var BLManager:MyEditorManager;
 		
 		private var
-			_state:State = new State(),
+			_state:State = new Editor([1, 1, [[0]], [], []]),
+			// _state:State = new State(),
 			_failed:Boolean = false;
 		
 		public function Main():void {

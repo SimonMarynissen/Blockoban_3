@@ -1,10 +1,9 @@
 package attributes {
-	import flash.display.Bitmap;
 	
-	public class Wall extends Bitmap {
+	public class Wall extends Attribute {
 		
 		public function Wall(X:int, Y:int) {
-			
+			super(X, Y, null);
 		}
 	}
 }

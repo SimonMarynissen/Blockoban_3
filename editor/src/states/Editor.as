@@ -6,6 +6,11 @@ package states {
 
 	public class Editor extends State {
 		
+		public static const
+			cellWidth:int = 24,
+			xOffset:int = 108,
+			yOffset:int = 57;
+		
 		private var
 			maxColumns:int = 16,
 			maxRows:int = 14, 
@@ -35,8 +40,58 @@ package states {
 		}
 		
 		public function serialize():ByteArray {
+			var data:Array = new Array();
+			var minX:int = maxColumns, maxX:int = 0;
+			var minY:int = maxRows, maxY:int = 0
+			for (var i:int = 0; i < maxRows * maxColumns; i++) {
+				if (walls[i]) {
+					if (walls[i].X < minX) minX = walls[i].X;
+					if (walls[i].X > maxX) maxX = walls[i].X;
+					if (walls[i].Y < minY) minY = walls[i].Y;
+					if (walls[i].Y > maxY) maxY = walls[i].Y;
+				}
+			}
+			for each (var block:Block in blocks) {
+				if (blocks[i].X < minX) minX = blocks[i].X;
+				if (blocks[i].X > maxX) maxX = blocks[i].X;
+				if (blocks[i].Y < minY) minY = blocks[i].Y;
+				if (blocks[i].Y > maxY) maxY = blocks[i].Y;
+			}
+			for each (var hold:Hold in holds) {
+				if (holds[i].X < minX) minX = holds[i].X;
+				if (holds[i].X > maxX) maxX = holds[i].X;
+				if (holds[i].Y < minY) minY = holds[i].Y;
+				if (holds[i].Y > maxY) maxY = holds[i].Y;
+			}
+			data[0] = maxX - minX + 1; // width
+			data[1] = maxY - minY + 1; // height
 			
-			return new ByteArray();
+			var wallsData:Array = new Array(); // walls
+			for (i = 0; i < maxRows * maxColumns; i++) {
+				if (walls[i]) {
+					var wallX:int = walls[i].X - minX + 1;
+					var wallY:int = walls[i].Y - minY + 1;
+					wallsData[wallX + data[0] * wallY] = [1]
+				}	
+			}
+			for (i = 0; i < maxRows * maxColumns; i++) {
+				if (wallsData[i] == null) wallsData[i] = 0;
+			}
+			data[2] = wallsData;
+			
+			data[3] = new Array(); // blocks
+			for each (block in blocks) {
+				data[3].push([block.X - minX + 1, block.Y - minY + 1, block.colour]);
+			}
+			
+			data[4] = new Array(); // holds
+			for each (hold in holds) {
+				data[4].push([hold.X - minX + 1, hold.Y - minY + 1, hold.colour]);
+			}
+			
+			var byte:ByteArray = new ByteArray();
+			byte.writeObject(data);
+			return byte;
 		}
 	}
 }
