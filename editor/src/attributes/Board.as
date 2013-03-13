@@ -29,6 +29,9 @@ package attributes {
 		
 		public function over(e:MouseEvent):void {
 			bit.bitmapData = Assets.boards[1];
+			if (e.buttonDown) {
+				click(e);
+			}
 		}
 		
 		public function out(e:MouseEvent):void {

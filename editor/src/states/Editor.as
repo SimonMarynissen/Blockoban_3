@@ -2,6 +2,7 @@ package states {
 	import attributes.Assets;
 	import attributes.Block;
 	import attributes.Board;
+	import attributes.Button;
 	import attributes.Hold;
 	import attributes.Wall;
 	import flash.utils.ByteArray;
@@ -20,15 +21,18 @@ package states {
 			walls:Array,
 			holds:Array,
 			boards:Array,
+			buttons:Array,
 			extra:Array,
-			type:String = "block";
+			type:String = "wall";
 		
 		public function Editor(data:Array) { // w, h, walls, blocks, holds
 			walls = new Array();
 			blocks = new Array();
 			holds = new Array();
 			boards = new Array();
-			extra = new Array(5);
+			buttons = new Array();
+			extra = new Array();
+			extra[0] = 5;
 			for (var x:int = 0; x < maxColumns; x++) {
 				for (var y:int = 0; y < maxRows; y++) {
 					addChild(boards[x + y * maxColumns] = new Board(x, y, this));
@@ -51,21 +55,67 @@ package states {
 				holds.push(new Hold(data[4][i][0], data[4][i][1], data[4][i][2])); // x, y, colour
 				addChild(holds[i]);
 			}
+			
+			for (i = 0; i < 3; i++) {
+				buttons.push(new Button(8 + i * (34), 8, Assets.blocks[i], clickFunction("block", [i + 1])));
+				if (i == 2) buttons.push(new Button(8 + i * (34), 42, Assets.blocks[6], clickFunction("block", [i + 5])));
+				else buttons.push(new Button(8 + i * (34), 42, Assets.blocks[i + 3], clickFunction("block", [i + 4])));
+			}
+			buttons.push(new Button(42, 76, Assets.blocks[5], clickFunction("block", [6])));
+			buttons.push(new Button(42, 110, Assets.wall, clickFunction("wall", [])));
+			for (i = 0; i < buttons.length; i++) {
+				addChild(buttons[i]);
+			}
+		}
+		
+		private function clickFunction(t:String, e:Array):Function {
+			var func:Function = function():void {
+				type = t;
+				extra.length = 0;
+				extra = e;
+			}
+			return func;
 		}
 		
 		public function action(X:int, Y:int):void {
-			trace("action");
+			var wall:Wall = walls[X + Y * maxColumns];
+			var block:Block = findBlock(X, Y);
+			var hold:Hold = findHold(X, Y);
 			switch (type) {
+				case "wall":
+					if (!wall && !block && !hold) {
+						addChild(walls[X + Y * maxColumns] = new Wall(X, Y));
+					}
+					break;
 				case "block":
-					trace("action");
-					blocks.push(new Block(X, Y, extra[0]));
-					addChild(blocks[blocks.length - 1]);
+					if (!wall && !block) {
+						block = new Block(X, Y, extra[0]);
+						blocks.push(block);
+						addChild(block);
+					}
 					break;
 				case "hold":
-					holds.push(new Hold(X, Y, extra[0]));
-					addChild(holds[holds.length - 1]);
+					if (!wall && !block && !hold) {
+						hold = new Hold(X, Y, extra[0]);
+						holds.push(hold);
+						addChild(hold);
+					}
 					break;
 			}
+		}
+		
+		public function findBlock(X:int, Y:int):Block {
+			for each (var block:Block in blocks) {
+				if (block.X == X && block.Y == Y) return block;
+			}
+			return null;
+		}
+		
+		public function findHold(X:int, Y:int):Hold {
+			for each (var hold:Hold in holds) {
+				if (hold.X == X && hold.Y == Y) return hold;
+			}
+			return null;
 		}
 		
 		public function serialize():ByteArray {

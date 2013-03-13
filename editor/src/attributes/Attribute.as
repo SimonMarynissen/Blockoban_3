@@ -11,10 +11,10 @@ package attributes {
 		
 		public function Attribute(X:int, Y:int, bit:BitmapData) {
 			super(bit);
+			x = Editor.xOffset + X * Editor.cellWidth;
+			y = Editor.yOffset + Y * Editor.cellWidth;
 			_X = X;
 			_Y = Y;
-			x = Editor.xOffset + _Y * Editor.cellWidth;
-			y = Editor.yOffset + _Y * Editor.cellWidth;
 		}
 		
 		public function get X():int { return _X; }

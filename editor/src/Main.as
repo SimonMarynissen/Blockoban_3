@@ -22,7 +22,7 @@ package {
 		
 		public function Main():void {
 			Assets.init();
-			_state = new Editor([1, 1, [[0]], [[0, 0, 5]], []]);
+			_state = new Editor([1, 1, [[0]], [], []]);
 			BLManager = new MyEditorManager(this);
 			addEventListener(Event.ADDED_TO_STAGE, function(e:Event):void {
 				stage.frameRate = 30;

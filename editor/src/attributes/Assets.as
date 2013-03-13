@@ -3,6 +3,9 @@ package attributes {
 
 	public class Assets {
 		
+		[Embed(source = "../assets/wall.png")]
+		private static const Wall_Image:Class;
+		
 		[Embed(source = "../assets/block_blue.png")]
 		private static const Blue:Class;
 		[Embed(source = "../assets/block_green.png")]
@@ -31,6 +34,7 @@ package attributes {
 			boards:Array;
 		
 		public static function init():void {
+			wall = new Wall_Image().bitmapData;
 			blocks = new Array(new Blue().bitmapData, new Green().bitmapData, new Orange().bitmapData, new Purple().bitmapData,
 				new Red().bitmapData, new White().bitmapData, new Yellow().bitmapData);
 				
