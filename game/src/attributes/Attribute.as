@@ -20,5 +20,7 @@ package attributes {
 		public function set x(x:int):void { _x = x; }
 		public function get y():int { return _y; }
 		public function set y(y:int):void { _y = y; }
+		public function get graphic():AttributeGraphic { return _graphic; }
+		public function set graphic(graphic:AttributeGraphic):void { _graphic = graphic; }
 	}
 }

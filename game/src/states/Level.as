@@ -1,6 +1,7 @@
 package states {
 	import attributes.Assets;
 	import attributes.Block;
+	import attributes.BlockShape;
 	import attributes.Board;
 	import attributes.Hold;
 	import attributes.Wall;
@@ -45,10 +46,8 @@ package states {
 			holds = new Array();
 			moves = new Array();
 			boards = new Array();
-			/*w = data[0];
-			h = data[1];*/
-			w = 3;
-			h = 5;
+			w = data[0];
+			h = data[1];
 			centre();
 			for (var i:int = 0; i < w+2; i++) {
 				for (var j:int = 0; j < h+2; j++) {
@@ -58,9 +57,23 @@ package states {
 					boards[i + (w + 2) * j] = new Board(i, j);
 				}
 			}
-			blocks.push(new Block(1, 1, Block.blue));
-			blocks.push(new Block(2, 2, Block.blue));
-			holds.push(new Hold(1, 2, 3));
+			
+			for (i = 0; i < data[3].length; i++) {
+				
+				if (data[3][i][0] == "s") {
+					trace("data", data[3][i]);
+					var shape:Array = new Array();
+					for (j = 1; j < data[3][i].length; j++) {
+						shape.push(new Block(data[3][i][j][0], data[3][i][j][1], data[3][i][j][2]));
+					}
+					blocks.push(new BlockShape(shape));
+				} else {
+					blocks.push(new Block(data[3][i][0], data[3][i][1], data[3][i][2]));
+				}
+			}
+			for (i = 0; i < data[4].length; i++) {
+				holds.push(new Hold(data[4][i][0], data[4][i][1], data[4][i][2]));
+			}
 			for (i = 0; i < (w + 2) * (h + 2); i++) boards[i].addToScreen(this);
 			for (i = 0; i < (w+2)*(h+2); i++) if (walls[i] != null) walls[i].addToScreen(this);
 			for each (var hold:Hold in holds) {

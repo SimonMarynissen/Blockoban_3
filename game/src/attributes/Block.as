@@ -24,9 +24,11 @@ package attributes {
 		private var
 			_colour:int;
 		
-		public function Block(x:int, y:int, colour:int) {
+		public function Block(x:int, y:int, colour:int, locked:Boolean = false) {
 			super(x, y);
 			_colour = colour;
+			_locked = locked;
+			_shaped = shaped;
 			_graphic = new BlockGraphic(Level.xOffset + x * Level.cellWidth, Level.yOffset + y * Level.cellWidth, _colour);
 		}
 		
@@ -36,7 +38,7 @@ package attributes {
 			_y += y;
 			var xAmount:int = Level.xOffset + _x * Level.cellWidth;
 			var yAmount:int = Level.yOffset + _y * Level.cellWidth;
-			Tweener.addTween(_graphic, { x:xAmount, y:yAmount, time:Math.sqrt(xAmount*xAmount + yAmount*yAmount)*0.001, transition:"easeOutQuint", onComplete:function ():void { _moving = false; }} );
+			Tweener.addTween(_graphic, { x:xAmount, y:yAmount, time:Math.sqrt(xAmount*xAmount + yAmount*yAmount)*0.001, transition:"easeOutQuint", onComplete:function ():void { _moving = false; }});
 		}
 		
 		public function rebase():void {

@@ -15,7 +15,7 @@ package {
 		public static var BLManager:MyGameManager;
 		
 		private var 
-			state:State = new State(),
+			state:State = new Level([3, 3, [], [[1, 1, 3], ["s", [1, 2, 4], [2, 2, 4], [2, 3, 4]]], []]);
 		
 		public function Main():void {
 			Assets.init();

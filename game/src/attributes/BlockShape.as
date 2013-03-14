@@ -1,4 +1,6 @@
 package attributes {
+	import caurina.transitions.Tweener;
+	import states.Level;
 	
 	public class BlockShape extends Block {
 		
@@ -7,37 +9,47 @@ package attributes {
 			graphics:Array;
 		
 		public function BlockShape(blocks:Array) {
+			trace(blocks);
+			super(0, 0, 0);
 			this.blocks = blocks;
 			_shaped = true;
-			for (var i in blocks) graphics.push(blocks[i].graphic);
-			graphic = new BlockShapeGraphic(graphics);
-			for each (var b:Block in blocks) {
+			for (var block:* in blocks) {
+				graphics.push(block.graphic);
+			}
+			_graphic = new BlockShapeGraphic(graphics);
+			/*for each (var b:Block in blocks) {
+				b.shaped = true;
 				if (b.x < x) x = b.x;
 				if (b.y < y) y = b.y;
 				if (b.locked) locked = true;
-			}
+			}*/
 		}
 		
-		override public function move(x:int, y:int) {
+		override public function move(x:int, y:int):void {
 			_moving = true;
-			this.x += x;
-			this.y += y;
+			_x += x;
+			_y += y;
+			var xAmount:int = Level.xOffset + _x * Level.cellWidth;
+			var yAmount:int = Level.yOffset + _y * Level.cellWidth;
 			for each (var b:Block in blocks) {
 				b.x += x, b.y += y;
-				Tweener.addTween(b.graphic, { x:x, y:y, time:Math.sqrt(x * x + y * y) * 0.001, transition:"linear", onComplete:function ():void { _moving = false; } } );
+				Tweener.addTween(b.graphic, { x:xAmount, y:yAmount, time:Math.sqrt(xAmount*xAmount + yAmount*yAmount)*0.001, transition:"easeOutQuint", onComplete:function ():void { _moving = false; }});
 			}
 		}
 		
-		public function rebase():void { // under construction
-			_graphic.x = Level.xOffset + _x * Level.cellWidth;
-			_graphic.y = Level.yOffset + _y * Level.cellWidth;
+		override public function rebase():void { // under construction
+			for (var b:* in blocks) {
+				trace(b);
+				//b.graphic.x = Level.xOffset + _x * Level.cellWidth;
+				//b.graphic.y = Level.yOffset + _y * Level.cellWidth;
+			}	
 		}
 		
-		public function clone():Block { // under construction
-			var block:Block = new Block(_x, _y, _colour);
+		override public function clone():Block { // under construction
+			var block:Block = new BlockShape(blocks);
 			block.locked = _locked;
 			block.moving = _moving;
-			block._graphic = _graphic;
+			block.graphic = _graphic;
 			block.icy = _icy;
 			block.destroyed = _destroyed;
 			block.shaped = _shaped;
