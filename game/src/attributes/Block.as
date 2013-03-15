@@ -12,7 +12,10 @@ package attributes {
 			red:int = 5,
 			white:int = 6,
 			yellow:int = 7;
-		
+			
+		public var
+			shape:BlockShape;
+			
 		protected var
 			_locked:Boolean,
 			_moving:Boolean,
@@ -24,11 +27,10 @@ package attributes {
 		private var
 			_colour:int;
 		
-		public function Block(x:int, y:int, colour:int, locked:Boolean = false) {
+		public function Block(x:int = 0, y:int = 0, colour:int = 1, locked:Boolean = false) {
 			super(x, y);
 			_colour = colour;
 			_locked = locked;
-			_shaped = shaped;
 			_graphic = new BlockGraphic(Level.xOffset + x * Level.cellWidth, Level.yOffset + y * Level.cellWidth, _colour);
 		}
 		

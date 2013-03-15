@@ -60,11 +60,14 @@ package states {
 			
 			for (i = 0; i < data[3].length; i++) {
 				
-				if (data[3][i][0] == "s") {
+				if (data[3][i][0] === "s") {
+					trace("blockshape");
 					var shape:Array = new Array();
 					for (j = 1; j < data[3][i].length; j++) {
+						trace(data[3][i][j]);
 						shape.push(new Block(data[3][i][j][0], data[3][i][j][1], data[3][i][j][2]));
 					}
+					trace(shape);
 					blocks.push(new BlockShape(shape));
 				} else {
 					blocks.push(new Block(data[3][i][0], data[3][i][1], data[3][i][2]));
@@ -122,8 +125,12 @@ package states {
 						else if (angle < Math.PI / 4 && angle >= -Math.PI / 4) xDirection = 1;
 						else if (angle >= 3 * Math.PI / 4 || angle < -3 * Math.PI / 4) xDirection = -1;
 						else if (angle >= -3 * Math.PI / 4 && angle < -Math.PI / 4) yDirection = -1;
-						findBlock(onDownX, onDownY).moving = true;
-						moveBlocks();
+						var block:Block = findBlock(onDownX, onDownY);
+						if (block != null) {
+							if (block.shaped) block.shape.moving = true;
+							else block.moving = true;
+							moveBlocks();
+						}
 					}
 				}
 				onDownX = -1, onDownY = -1;
@@ -143,62 +150,123 @@ package states {
 			sortBlocks(xDirection, yDirection);
 			for (var i:int = 0; i < blocks.length; i++) {
 				if (blocks[i].moving) {
-					var xcor:int = blocks[i].x + xDirection;
-					var ycor:int = blocks[i].y + yDirection;
-					if (xcor <= 0 || ycor <= 0 || xcor > w || ycor > h || walls[xcor + (w+2) * ycor] != null) {
-						blocks[i].moving = false;
-					} else {
-						var block2:Block = findBlock(xcor, ycor);
-						if (block2 != null && block2 != blocks[i]) {
-							if (block2.icy) block2.moving = true;
-							blocks[i].moving = false;
+					if (blocks[i] is BlockShape) {
+						var bool:Boolean = false;
+						var shape:BlockShape = blocks[i] as BlockShape;
+						for each (var block:Block in shape.blocks) {
+							if (moveCollide(block)) bool = true;
 						}
-					}
-					if (blocks[i].moving) {
-						blocks[i].move(xDirection, yDirection);
-						var hold:Hold = findHold(blocks[i].x, blocks[i].y);
-						if (hold != null) blocks[i].holded = true;
-						matching = true;
-						falling = true;
+						if (!bool) {
+							move(shape, true);
+						}
+					} else {
+						if (!moveCollide(blocks[i])) move(blocks[i]);
 					}
 				}
 			}
+		}
+		
+		private function move(block:Block, shaped:Boolean = false):void {
+			block.move(xDirection, yDirection);
+			if (shaped) {
+				for each (var b:Block in (block as BlockShape).blocks) {
+					var hold:Hold = findHold(b.x, b.y);
+					if (hold != null) b.holded = true;
+				}
+			} else {
+				hold = findHold(block.x, block.y);
+				if (hold != null) block.holded = true;
+			}
+			matching = true;
+			falling = true;
+		}
+		
+		private function moveCollide(block:Block):Boolean {
+			var xcor:int = block.x + xDirection;
+			var ycor:int = block.y + yDirection;
+			if (xcor <= 0 || ycor <= 0 || xcor > w || ycor > h || walls[xcor + (w+2) * ycor] != null) {
+				block.moving = false;
+				return true;
+			}
+			var block2:Block = findBlock(xcor, ycor);
+			if (block2 != null && block2 != block) {
+				if (block2.shape != null && block2.shape == block.shape) return false; 
+				if (block2.icy) block2.moving = true;
+				block.moving = false;
+				return true;
+			}
+			return false;
 		}
 		
 		private function fallBlocks():void {
 			sortBlocks(xGravity, yGravity);
 			for (var i:int = 0; i < blocks.length; i++) {
 				if (blocks[i].holded) continue;
-				var _falling:Boolean = true;
-				var xDistance:int = 0, yDistance:int = 0;
-				var xcor:int = blocks[i].x;
-				var ycor:int = blocks[i].y;
-				while (_falling) {
-					xcor += xGravity, ycor += yGravity;
-					if (xcor <= 0 || ycor <= 0 || xcor > w || ycor > h || walls[xcor + (w+2) * ycor] != null) {
-						_falling = false;
-						break;
+				if (blocks[i] is BlockShape) {
+					var bool:Boolean = false;
+					var shape:BlockShape = blocks[i] as BlockShape;
+					var arrays:Array = new Array();
+					for (var j:int = 0; j < shape.blocks.length; j++) {
+						var arr:Array = fallCollide(shape.blocks[j]);
+						if (!arr[1] && !arr[2]) {
+							arrays[j] = arr;
+							bool = true;
+						}
 					}
-					var block:Block = findBlock(xcor, ycor);
-					if (block != null && block != blocks[i]) {
-						_falling = false;
-						break;
+					if (!bool) {
+						var xDist:int = 100;
+						var yDist:int = 100;
+						for (j = 0; j < shape.blocks.length; j++) {
+							if (xGravity > 0)
+							xDist = Math.min(xDist, arrays[j][1]);
+							yDist = Math.min(yDist, arrays[j][2]);
+						}
+						for (j = 0; j < shape.blocks.length; j++) {
+							fall(shape.blocks[j], xDist, yDist);
+						}
+						matching = true;
 					}
-					var hold:Hold = findHold(xcor, ycor);
-					if (hold != null) {
-						blocks[i].holded = true;
-						xDistance += xGravity, yDistance += yGravity;
-						break;
+				} else {
+					arr = fallCollide(blocks[i]);
+					if (arr[1] || arr[2]) {
+						blocks[i].holded = arr[0];
+						fall(blocks[i], arr[1], arr[2]);
+						matching = true;
 					}
-					xDistance += xGravity, yDistance += yGravity;
-				}
-				if (xDistance || yDistance) {
-					blocks[i].move(xDistance, yDistance);
-					matching = true;
 				}
 			}
 			falling = false;
 			if (!matching) endMove();
+		}
+		
+		private function fallCollide(block:Block):Array { // holded, xDistance, yDistance
+			var _falling:Boolean = true;
+			var xDistance:int = 0, yDistance:int = 0;
+			var xcor:int = block.x;
+			var ycor:int = block.y;
+			while (_falling) {
+				xcor += xGravity, ycor += yGravity;
+				if (xcor <= 0 || ycor <= 0 || xcor > w || ycor > h || walls[xcor + (w+2) * ycor] != null) {
+					return [false, xDistance, yDistance];
+				}
+				var block2:Block = findBlock(xcor, ycor);
+				if (block2 != null && block2 != block) {
+					if (!(block2.shape != null && block2.shape == block.shape)) {
+						return [false, xDistance, yDistance];
+					}
+				}
+				var hold:Hold = findHold(xcor, ycor);
+				if (hold != null) {
+					xDistance += xGravity, yDistance += yGravity;
+					return [true, xDistance, yDistance];
+				}
+				xDistance += xGravity, yDistance += yGravity;
+			}
+			return [false, 0, 0];
+		}
+		
+		private function fall(block:Block, xDist:int, yDist:int):void {
+			block.move(xDist, yDist);
 		}
 		
 		private function matchBlocks():void {

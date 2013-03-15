@@ -4,59 +4,45 @@ package attributes {
 	
 	public class BlockShape extends Block {
 		
-		private var
+		public var
 			blocks:/*Block*/Array,
 			graphics:Array;
 		
 		public function BlockShape(blocks:Array) {
-			super(0, 0, 1);
-			trace(blocks);
+			if (false) super();
 			this.blocks = blocks;
+			graphics = new Array();
 			_shaped = true;
-			for (var block:* in blocks) {
-				//graphics.push(block.graphic);
+			for each (var block:Block in blocks) {
+				graphics.push(block.graphic);
+				block.shaped = true;
+				block.shape = this;
+				if (block.x < x) x = block.x;
+				if (block.y < y) y = block.y;
+				if (block.locked) locked = true;
 			}
 			_graphic = new BlockShapeGraphic(graphics);
-			/*for each (var b:Block in blocks) {
-				b.shaped = true;
-				if (b.x < x) x = b.x;
-				if (b.y < y) y = b.y;
-				if (b.locked) locked = true;
-			}*/
 		}
 		
 		override public function move(x:int, y:int):void {
 			_moving = true;
 			_x += x;
 			_y += y;
-			var xAmount:int = Level.xOffset + _x * Level.cellWidth;
-			var yAmount:int = Level.yOffset + _y * Level.cellWidth;
 			for each (var b:Block in blocks) {
 				b.x += x, b.y += y;
+				var xAmount:int = Level.xOffset + b.x * Level.cellWidth;
+				var yAmount:int = Level.yOffset + b.y * Level.cellWidth;
 				Tweener.addTween(b.graphic, { x:xAmount, y:yAmount, time:Math.sqrt(xAmount*xAmount + yAmount*yAmount)*0.001, transition:"easeOutQuint", onComplete:function ():void { _moving = false; }});
 			}
 		}
 		
 		override public function rebase():void { // under construction
-			for (var b:* in blocks) {
-				//trace(b);
-				//b.graphic.x = Level.xOffset + _x * Level.cellWidth;
-				//b.graphic.y = Level.yOffset + _y * Level.cellWidth;
+			for each (var b:Block in blocks) {
+				b.graphic.x = Level.xOffset + _x * Level.cellWidth;
+				b.graphic.y = Level.yOffset + _y * Level.cellWidth;
 			}	
 		}
-		
-		override public function clone():Block { // under construction
-			var block:Block = new BlockShape(blocks);
-			block.locked = _locked;
-			block.moving = _moving;
-			block.graphic = _graphic;
-			block.icy = _icy;
-			block.destroyed = _destroyed;
-			block.shaped = _shaped;
-			block.holded = _holded;
-			return block;
-		}
-		
+
 		override public function containBlock(x:int, y:int):Block {
 			for each (var b:Block in blocks) {
 				if (b.x == x && b.y == y) return b;
