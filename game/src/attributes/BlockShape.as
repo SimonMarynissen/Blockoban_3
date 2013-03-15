@@ -9,12 +9,12 @@ package attributes {
 			graphics:Array;
 		
 		public function BlockShape(blocks:Array) {
+			super(0, 0, 1);
 			trace(blocks);
-			super(0, 0, 0);
 			this.blocks = blocks;
 			_shaped = true;
 			for (var block:* in blocks) {
-				graphics.push(block.graphic);
+				//graphics.push(block.graphic);
 			}
 			_graphic = new BlockShapeGraphic(graphics);
 			/*for each (var b:Block in blocks) {
@@ -39,7 +39,7 @@ package attributes {
 		
 		override public function rebase():void { // under construction
 			for (var b:* in blocks) {
-				trace(b);
+				//trace(b);
 				//b.graphic.x = Level.xOffset + _x * Level.cellWidth;
 				//b.graphic.y = Level.yOffset + _y * Level.cellWidth;
 			}	

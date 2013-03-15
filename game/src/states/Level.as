@@ -61,7 +61,6 @@ package states {
 			for (i = 0; i < data[3].length; i++) {
 				
 				if (data[3][i][0] == "s") {
-					trace("data", data[3][i]);
 					var shape:Array = new Array();
 					for (j = 1; j < data[3][i].length; j++) {
 						shape.push(new Block(data[3][i][j][0], data[3][i][j][1], data[3][i][j][2]));
@@ -272,7 +271,6 @@ package states {
 		private function centre():void {
 			xOffset = (stage.stageWidth - (w + 2) * cellWidth) / 2;
 			yOffset = (stage.stageHeight - 50 - (h + 2) * cellWidth) / 2;
-			trace("centre", xOffset, yOffset);
 		}
 	}
 }
