@@ -156,9 +156,8 @@ package states {
 						for each (var block:Block in shape.blocks) {
 							if (moveCollide(block)) bool = true;
 						}
-						if (!bool) {
-							move(shape, true);
-						}
+						if (!bool) move(shape, true);
+						else shape.moving = false;
 					} else {
 						if (!moveCollide(blocks[i])) move(blocks[i]);
 					}
@@ -208,16 +207,13 @@ package states {
 					var arrays:Array = new Array();
 					for (var j:int = 0; j < shape.blocks.length; j++) {
 						var arr:Array = fallCollide(shape.blocks[j]);
-						if (!arr[1] && !arr[2]) {
-							arrays[j] = arr;
-							bool = true;
-						}
+						arrays[j] = arr;
+						if (!arr[1] && !arr[2]) bool = true;
 					}
 					if (!bool) {
 						var xDist:int = 100;
 						var yDist:int = 100;
 						for (j = 0; j < shape.blocks.length; j++) {
-							if (xGravity > 0)
 							xDist = Math.min(xDist, arrays[j][1]);
 							yDist = Math.min(yDist, arrays[j][2]);
 						}
