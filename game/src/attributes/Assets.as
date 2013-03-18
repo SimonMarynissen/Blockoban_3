@@ -42,13 +42,14 @@ package attributes {
 			board:BitmapData;
 		
 		public static function init():void {
+			trace("init");
 			blocks = new Array(new Blue().bitmapData, new Green().bitmapData, new Orange().bitmapData,
 				new Purple().bitmapData, new Red().bitmapData, new White().bitmapData,
 				new Yellow().bitmapData);
 				walls = new Array();
 			var wall:BitmapData = new Wall().bitmapData;
 			for (var i:int = 0; i < 20; i++) {
-				var bit:BitmapData = new BitmapData(48, 48, true);
+				var bit:BitmapData = new BitmapData(48, 48, true, 0);
 				bit.copyPixels(wall, new Rectangle(48 * i, 0, 48, 48), new Point(0, 0), null, null, true);
 				walls.push(bit);
 			}
