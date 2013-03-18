@@ -1,14 +1,14 @@
 package attributes {
 	import flash.display.BitmapData;
 
-	public class WallGraphic extends AttributeGraphic {
+	public class WallGraphic extends AutoTileGraphic {
 		
 		private var
-			frames:int,
+			frame:int,
 			corners:int;
 		
 		public function WallGraphic(x:Number, y:Number) {
-			super(x, y, Assets.walls[0]);
+			super(x, y, Assets.walls);
 		}
 	}
 }

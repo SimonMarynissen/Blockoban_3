@@ -10,6 +10,8 @@ package attributes {
 		
 		public function BlockShape(blocks:Array) {
 			if (false) super();
+			this.x = 100;
+			this.y = 100;
 			this.blocks = blocks;
 			graphics = new Array();
 			_shaped = true;
@@ -38,8 +40,8 @@ package attributes {
 		
 		override public function rebase():void { // under construction
 			for each (var b:Block in blocks) {
-				b.graphic.x = Level.xOffset + _x * Level.cellWidth;
-				b.graphic.y = Level.yOffset + _y * Level.cellWidth;
+				b.graphic.x = Level.xOffset + b.x * Level.cellWidth;
+				b.graphic.y = Level.yOffset + b.y * Level.cellWidth;
 			}	
 		}
 
@@ -48,6 +50,20 @@ package attributes {
 				if (b.x == x && b.y == y) return b;
 			}
 			return null;
+		}
+		
+		override public function clone():Block {
+			var shapeBlocks:Array = new Array();
+			for each (var b:Block in blocks) shapeBlocks.push(b.clone());
+			var block:BlockShape = new BlockShape(shapeBlocks);
+			block.locked = _locked;
+			block.moving = _moving;
+			block.graphic = _graphic;
+			block.icy = _icy;
+			block.destroyed = _destroyed;
+			block.shaped = _shaped;
+			block.holded = _holded;
+			return block;
 		}
 	}
 }

@@ -13,8 +13,9 @@ package states {
 	public class Level extends State {
 		
 		public static var
-			cellWidth:Number = 32,
-			xOffset:Number = 0, yOffset:Number = 0;
+			cellWidth:Number = 48,
+			xOffset:Number = 0, yOffset:Number = 0,
+			scale:Number = 1;
 			
 		private var
 			data:Array,
@@ -61,13 +62,10 @@ package states {
 			for (i = 0; i < data[3].length; i++) {
 				
 				if (data[3][i][0] === "s") {
-					trace("blockshape");
 					var shape:Array = new Array();
 					for (j = 1; j < data[3][i].length; j++) {
-						trace(data[3][i][j]);
 						shape.push(new Block(data[3][i][j][0], data[3][i][j][1], data[3][i][j][2]));
 					}
-					trace(shape);
 					blocks.push(new BlockShape(shape));
 				} else {
 					blocks.push(new Block(data[3][i][0], data[3][i][1], data[3][i][2]));
@@ -77,6 +75,7 @@ package states {
 				holds.push(new Hold(data[4][i][0], data[4][i][1], data[4][i][2]));
 			}
 			for (i = 0; i < (w + 2) * (h + 2); i++) boards[i].addToScreen(this);
+			autoTile(walls, w + 2, h + 2);
 			for (i = 0; i < (w+2)*(h+2); i++) if (walls[i] != null) walls[i].addToScreen(this);
 			for each (var hold:Hold in holds) {
 				hold.addToScreen(this);
@@ -107,7 +106,7 @@ package states {
 		}
 		
 		private function mouseMove(e:MouseEvent):void {
-			trace("move");
+			
 		}
 		
 		private function mouseUp(e:MouseEvent):void {
@@ -127,7 +126,15 @@ package states {
 						else if (angle >= -3 * Math.PI / 4 && angle < -Math.PI / 4) yDirection = -1;
 						var block:Block = findBlock(onDownX, onDownY);
 						if (block != null) {
-							if (block.shaped) block.shape.moving = true;
+							trace("starting to move");
+							if (block.shape) {
+								trace("shaping");
+								block.shape.moving = true;
+								trace(block.shape.moving);
+								trace(blocks.indexOf(block.shape));
+								trace(blocks.length);
+								trace(moves.length);
+							}
 							else block.moving = true;
 							moveBlocks();
 						}
@@ -150,7 +157,9 @@ package states {
 			sortBlocks(xDirection, yDirection);
 			for (var i:int = 0; i < blocks.length; i++) {
 				if (blocks[i].moving) {
+					trace("moving!");
 					if (blocks[i] is BlockShape) {
+						trace("shape is moving");
 						var bool:Boolean = false;
 						var shape:BlockShape = blocks[i] as BlockShape;
 						for each (var block:Block in shape.blocks) {
@@ -333,8 +342,45 @@ package states {
 		}
 		
 		private function centre():void {
+			if (w <= 8 && h <= 6) {
+				scale = 1;
+				cellWidth = 48;
+			} else if (w <= 11 && h <= 9) {
+				scale = 3 / 4;
+				cellWidth = 36;
+			} else {
+				scale = 1 / 2;
+				cellWidth = 24;
+			}
 			xOffset = (stage.stageWidth - (w + 2) * cellWidth) / 2;
-			yOffset = (stage.stageHeight - 50 - (h + 2) * cellWidth) / 2;
+			yOffset = (stage.stageHeight - 36 - (h + 2) * cellWidth) / 2;
+		}
+		
+		private function autoTile(arr:Array, W:int, H:int):void {
+			if (arr.length < W * H) return;
+			for (var x:int = 0; x < W; x++) {
+				for (var y:int = 0; y < H; y++) {
+					if (arr[x + W * y] != null) {
+						var a:int = 1, b:int = 1, c:int = 1, d:int = 1, e:int = 1, f:int = 1, g:int = 1, h:int = 1;
+						if (y == H - 1 || arr[x + W * (y + 1)] == null) a = 0;
+						if (x == W - 1 || arr[x + 1 + W * y] == null) b = 0;
+						if (x == 0 || arr[x - 1 + W * y] == null) c = 0;
+						if (y == 0 || arr[x + W * (y - 1)] == null) d = 0;
+						if (x == W - 1 || y == H - 1 || arr[x + 1 + W * (y + 1)] == null) e = 0;
+						if (x == 0 || y == H - 1 || arr[x - 1 + W * (y + 1)] == null) f = 0;
+						if (x == W - 1 || y == 0 || arr[x + 1 + W * (y - 1)] == null) g = 0;
+						if (x == 0 || y == 0 || arr[x - 1 + W * (y - 1)] == null) h = 0;
+						var frame:int = a + 2 * b + 4 * c + 8 * d;
+						var corners:int = 0;
+						if (!f && a && c) corners += 1;
+						if (!e && a && b) corners += 2;
+						if (!g && b && d) corners += 4;
+						if (!h && c && d) corners += 8;
+						trace(corners);
+						arr[x + W * y].autoTile(frame, corners);
+					}
+				}
+			}
 		}
 	}
 }

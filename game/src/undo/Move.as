@@ -12,6 +12,8 @@ package undo {
 			for (var i:int = 0; i < blocks.length; i++) {
 				_blocks.push(blocks[i].clone());
 			}
+			trace(toString());
+			
 		}
 		
 		public function toString():String {
