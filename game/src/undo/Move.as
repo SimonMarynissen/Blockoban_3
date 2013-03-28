@@ -12,7 +12,6 @@ package undo {
 			for (var i:int = 0; i < blocks.length; i++) {
 				_blocks.push(blocks[i].clone());
 			}
-			trace(toString());
 			
 		}
 		
@@ -25,6 +24,6 @@ package undo {
 		}
 		
 		public function get blocks():Array { return _blocks; }
-		public function set blocks(blocks:Array):void { _blocks = blocks; }
+		//public function set blocks(blocks:Array):void { _blocks = blocks; }
 	}
 }

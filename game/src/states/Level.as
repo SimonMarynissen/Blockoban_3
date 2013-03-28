@@ -64,11 +64,11 @@ package states {
 				if (data[3][i][0] === "s") {
 					var shape:Array = new Array();
 					for (j = 1; j < data[3][i].length; j++) {
-						shape.push(new Block(data[3][i][j][0], data[3][i][j][1], data[3][i][j][2]));
+						shape.push(new Block(data[3][i][j][0], data[3][i][j][1], data[3][i][j][2], data[3][i][j][3], data[3][i][j][4]));
 					}
 					blocks.push(new BlockShape(shape));
 				} else {
-					blocks.push(new Block(data[3][i][0], data[3][i][1], data[3][i][2]));
+					blocks.push(new Block(data[3][i][0], data[3][i][1], data[3][i][2], data[3][i][3], data[3][i][4]));
 				}
 			}
 			for (i = 0; i < data[4].length; i++) {
@@ -126,14 +126,8 @@ package states {
 						else if (angle >= -3 * Math.PI / 4 && angle < -Math.PI / 4) yDirection = -1;
 						var block:Block = findBlock(onDownX, onDownY);
 						if (block != null) {
-							trace("starting to move");
 							if (block.shape) {
-								trace("shaping");
 								block.shape.moving = true;
-								trace(block.shape.moving);
-								trace(blocks.indexOf(block.shape));
-								trace(blocks.length);
-								trace(moves.length);
 							}
 							else block.moving = true;
 							moveBlocks();
@@ -157,9 +151,7 @@ package states {
 			sortBlocks(xDirection, yDirection);
 			for (var i:int = 0; i < blocks.length; i++) {
 				if (blocks[i].moving) {
-					trace("moving!");
 					if (blocks[i] is BlockShape) {
-						trace("shape is moving");
 						var bool:Boolean = false;
 						var shape:BlockShape = blocks[i] as BlockShape;
 						for each (var block:Block in shape.blocks) {
@@ -203,6 +195,12 @@ package states {
 				block.moving = false;
 				return true;
 			}
+			/*
+			var block3:Block = findBlock(xcor + xDirection, ycor + yDirection);
+			if (block3 != null && block3 != block) {
+				block3.moving = true;
+			}
+			//*/
 			return false;
 		}
 		
@@ -296,6 +294,10 @@ package states {
 			}
 			matching = false;
 			falling = true;
+			/*if (isMoving()) {
+				trace("lool?");
+				moveBlocks();
+			} else falling = true;*/
 		}
 		
 		private function endMove():void {
@@ -305,7 +307,7 @@ package states {
 		
 		private function undo():void {
 			if (moves.length > 1 && !isMoving() && !falling && !matching) {
-				moves.pop()
+				moves.pop();
 				var previousMove:Move = moves[moves.length - 1];
 				blocks = previousMove.blocks;
 				for each (var block:Block in blocks) block.rebase();
@@ -376,7 +378,6 @@ package states {
 						if (!e && a && b) corners += 2;
 						if (!g && b && d) corners += 4;
 						if (!h && c && d) corners += 8;
-						trace(corners);
 						arr[x + W * y].autoTile(frame, corners);
 					}
 				}

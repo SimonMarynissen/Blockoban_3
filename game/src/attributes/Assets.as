@@ -20,6 +20,21 @@ package attributes {
 		[Embed(source="../assets/Yellow-Square.png")]
 		private static const Yellow:Class;
 		
+		[Embed(source = "../assets/Blue-Circle.png")]
+		private static const Blue_Circle:Class;
+		[Embed(source = "../assets/Green-Circle.png")]
+		private static const Green_Circle:Class;
+		[Embed(source = "../assets/Orange-Circle.png")]
+		private static const Orange_Circle:Class;
+		[Embed(source = "../assets/Purple-Circle.png")]
+		private static const Purple_Circle:Class;
+		[Embed(source = "../assets/Red-Circle.png")]
+		private static const Red_Circle:Class;
+		[Embed(source = "../assets/White-Circle.png")]
+		private static const White_Circle:Class;
+		[Embed(source = "../assets/Yellow-Circle.png")]
+		private static const Yellow_Circle:Class;
+		
 		[Embed(source="../assets/auto-dark.png")]
 		private static const Wall:Class;
 		
@@ -35,18 +50,21 @@ package attributes {
 		private static const Board:Class;
 		
 		public static var
-			blocks:Array,
+			blocks_square:Array,
+			blocks_circle:Array,
 			walls:Array,
 			holds:Array,
 			undoButton:BitmapData,
 			board:BitmapData;
 		
 		public static function init():void {
-			trace("init");
-			blocks = new Array(new Blue().bitmapData, new Green().bitmapData, new Orange().bitmapData,
+			blocks_square = new Array(new Blue().bitmapData, new Green().bitmapData, new Orange().bitmapData,
 				new Purple().bitmapData, new Red().bitmapData, new White().bitmapData,
 				new Yellow().bitmapData);
-				walls = new Array();
+			blocks_circle = new Array(new Blue_Circle().bitmapData, new Green_Circle().bitmapData, new Orange_Circle().bitmapData,
+				new Purple_Circle().bitmapData, new Red_Circle().bitmapData, new White_Circle().bitmapData,
+				new Yellow_Circle().bitmapData);
+			walls = new Array();
 			var wall:BitmapData = new Wall().bitmapData;
 			for (var i:int = 0; i < 20; i++) {
 				var bit:BitmapData = new BitmapData(48, 48, true, 0);

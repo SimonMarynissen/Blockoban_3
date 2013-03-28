@@ -27,10 +27,11 @@ package attributes {
 		private var
 			_colour:int;
 		
-		public function Block(x:int = 0, y:int = 0, colour:int = 1, locked:Boolean = false) {
+		public function Block(x:int = 0, y:int = 0, colour:int = 1, icy:Boolean = false, locked:Boolean = false) {
 			super(x, y);
 			_colour = colour;
 			_locked = locked;
+			_icy = icy;
 			_graphic = new BlockGraphic(Level.xOffset + x * Level.cellWidth, Level.yOffset + y * Level.cellWidth, _colour);
 		}
 		

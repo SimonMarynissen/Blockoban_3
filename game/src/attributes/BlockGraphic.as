@@ -1,9 +1,15 @@
 package attributes {
+	import flash.display.BitmapData;
 	
 	public class BlockGraphic extends AttributeGraphic {
 		
-		public function BlockGraphic(x:Number, y:Number, colour:int) {
-			super(x, y, Assets.blocks[colour - 1]);
+		private var
+			colour:int,
+			icy:Boolean,
+			locked:Boolean;
+		
+		public function BlockGraphic(x:Number, y:Number, colour:int, icy:Boolean = false, locked:Boolean = false) {
+			super(x, y, icy ? Assets.blocks_circle[colour - 1] : Assets.blocks_square[colour - 1]);
 		}
 	}
 }
